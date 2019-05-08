@@ -14,8 +14,8 @@
         <!-- update -->
         <el-dialog :visible.sync="dialogUpdate" highlight-current-row title="Update order" width="30%">
             <el-input name="name" placeholder="Please name" v-model="name"></el-input>
-            <el-input placeholder="Please price" v-model="price"></el-input>
-            <el-input placeholder="Please notes" v-model="notes"></el-input>
+            <el-input placeholder="Please price" type="number" v-model="price"></el-input>
+            <el-input placeholder="Please notes" type="textarea" v-model="notes"></el-input>
             <span class="dialog-footer" slot="footer">
                 <el-button @click="dialogUpdate = false">Cancel</el-button>
                 <el-button @click="doneUpdate(orders)" type="primary">Confirm</el-button>
@@ -24,7 +24,7 @@
 
         <el-table :data="orders">
             <el-table-column type="index" width="50"></el-table-column>
-            <el-table-column label="Name" prop="name" width="100"></el-table-column>
+            <el-table-column label="Name" prop="name" width="200"></el-table-column>
             <el-table-column label="Price" prop="price" width="100"></el-table-column>
             <el-table-column label="Notes" prop="notes" width="250"></el-table-column>
             <el-table-column label="Operations" width="120">
@@ -39,7 +39,7 @@
 
   <script>
 const STORAGE_KEY = "todo-storage";
-
+import mockData from "../mockData.json";
 export default {
     name: "Orders",
     data() {
@@ -54,6 +54,8 @@ export default {
         };
     },
     created() {
+        console.log("mock", mockData);
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(mockData.orders));
         this.orders = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
     },
     methods: {
@@ -72,31 +74,25 @@ export default {
                 notes: this.notes
             };
             this.orders.push(params);
-            localStorage.setItem("orders", JSON.stringify(this.orders));
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(this.orders));
         },
-        editOrder(index) {
+        editOrder(index, data) {
             this.dialogUpdate = true;
+            this.name = data.name;
+            this.price = data.price;
+            this.notes = data.notes;
             this.index = index;
         },
         doneUpdate() {
             this.dialogUpdate = false;
-            let params = {
-                name: this.name,
-                price: this.price,
-                notes: this.notes
-            };
-            this.orders[this.index].name = params.name;
-            this.orders[this.index].price = params.price;
-            this.orders[this.index].notes = params.notes;
-            localStorage.setItem("orders", JSON.stringify(this.orders));
+            this.orders[this.index].name = this.name;
+            this.orders[this.index].price = this.price;
+            this.orders[this.index].notes = this.notes;
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(this.orders));
         },
         removeOrder(data) {
-            this.orders.map(order => {
-                if (order.id === data.$index) {
-                    this.orders.splice(order.id, 1);
-                }
-            });
-            localStorage.setItem("orders", JSON.stringify(this.orders));
+            this.orders.splice(data.$index, 1);
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(this.orders));
         }
     }
 };
@@ -107,8 +103,7 @@ export default {
     flex-direction: column;
 }
 .container .el-table {
-    width: 50%;
-    max-width: 50%;
+    max-width: 720px;
 }
 .container .button-add {
     width: 100px;
