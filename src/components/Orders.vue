@@ -3,8 +3,8 @@
         <el-button @click="openModal()" class="btn-add" type="primary">Add order</el-button>
         <el-dialog :visible.sync="dialogVisible" highlight-current-row title="Add order" width="30%">
             <el-input name="name" placeholder="Please name" v-model="name"></el-input>
-            <el-input placeholder="Please price" v-model="price"></el-input>
-            <el-input placeholder="Please notes" v-model="notes"></el-input>
+            <el-input placeholder="Please price" type="number" v-model="price"></el-input>
+            <el-input placeholder="Please notes" type="textarea" v-model="notes"></el-input>
             <span class="dialog-footer" slot="footer">
                 <el-button @click="dialogVisible = false">Cancel</el-button>
                 <el-button @click="addOrder()" type="primary">Confirm</el-button>
